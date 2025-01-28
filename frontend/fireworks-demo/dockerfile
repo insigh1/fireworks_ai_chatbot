@@ -1,0 +1,21 @@
+# File: frontend/fireworks-demo/Dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package.json and lock file
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy remaining source
+COPY . .
+
+# Build Next.js
+RUN npm run build
+
+# Expose port and start
+EXPOSE 3000
+CMD ["npm", "start"]
+

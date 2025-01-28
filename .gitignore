@@ -1,0 +1,8 @@
+docker/.env           # Ignore environment variables in docker folder
+*.env          # Any file ending with .env
+.DS_Store      # macOS-specific files
+.idea/        # JetBrains IDE-related files
+.vscode/      # VS Code-related files
+node_modules/  # Node.js modules (will be installed separately)
+dist/         # Build outputs
+public/build   # Next.js build outputs
