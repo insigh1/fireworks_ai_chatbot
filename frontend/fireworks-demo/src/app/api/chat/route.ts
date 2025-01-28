@@ -13,9 +13,14 @@ export async function POST(req: NextRequest) {
     });
 
     const data = await response.json();
-    return NextResponse.json({ role: "assistant", content: data.content });
+
+    // Include duration_ms in the response
+    return NextResponse.json({
+      role: "assistant",
+      content: data.content,
+      duration_ms: data.duration_ms, // Add duration_ms here
+    });
   } catch (error) {
-    // Use the error variable so lint doesn't complain
     console.error("Error in chat route:", error);
     return NextResponse.json({ error: "fetch failed" }, { status: 500 });
   }

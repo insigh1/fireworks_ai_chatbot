@@ -1,5 +1,6 @@
 # File: backend/app.py
 import os
+import time
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fireworks.client import Fireworks
@@ -36,12 +37,26 @@ async def chat(request: ChatRequest):
     Accepts a user message and calls Fireworks AI's chat completions.
     """
     try:
+        # Start timing
+        start_time = time.perf_counter()
+
+        # Fireworks API call
         response = client.chat.completions.create(
             model="accounts/fireworks/models/llama-v3p1-8b-instruct",
             messages=[{"role": "user", "content": request.message}],
         )
-        # Return the text only
-        return {"content": response.choices[0].message.content}
+
+        # End timing
+        end_time = time.perf_counter()
+        duration_ms = (end_time - start_time) * 1000  # Convert to milliseconds
+
+        print(f"API call duration: {duration_ms} ms")  # Debug log
+
+        # Return both content and duration_ms
+        return {
+            "content": response.choices[0].message.content,
+            "duration_ms": duration_ms,  # Add duration to the response
+            "role": "assistant"  # Add role for clarity
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-

@@ -1,5 +1,3 @@
-// File: src/app/page.tsx
-
 "use client";
 
 import React, { useState } from "react";
@@ -25,6 +23,7 @@ function ChatBubble({ role, content }: { role: string; content: string }) {
 export default function Home() {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
   const [input, setInput] = useState("");
+  const [duration, setDuration] = useState<number | null>(null); // State to store API call speed
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -37,11 +36,15 @@ export default function Home() {
       });
       const data = await response.json();
 
+      console.log("API Response:", data); // Debug log
+
+      // Update messages and API call duration
       setMessages((old) => [
         ...old,
         { role: "user", content: input },
-        { role: data.role, content: data.content },
+        { role: "assistant", content: data.content }, // Correctly assign the assistant role
       ]);
+      setDuration(data.duration_ms); // Store the API call duration
       setInput("");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -64,10 +67,19 @@ export default function Home() {
           ))}
         </div>
 
+        {/* Display API call duration */}
+        {duration !== null && duration !== undefined ? (
+          <p className="text-sm text-gray-600 mb-2">
+            Response time: {duration.toFixed(2)} ms
+          </p>
+        ) : (
+          <p className="text-sm text-gray-600 mb-2">Waiting for response...</p>
+        )}
+
         {/* Input + Button row */}
         <div className="flex items-center space-x-2">
           <input
-	    style={{ color: "black" }}
+            style={{ color: "black" }}
             className="flex-grow border border-gray-300 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="text"
             value={input}
@@ -85,4 +97,3 @@ export default function Home() {
     </main>
   );
 }
-
